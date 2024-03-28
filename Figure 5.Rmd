@@ -1,0 +1,403 @@
+---
+title: "Figure 5"
+author: "Ding"
+date: "2024-03-23"
+output: html_document
+---
+
+```{r include=FALSE}
+library(rio)
+library(survival)
+library(survminer)
+library(patchwork)
+library(ggplot2)
+library(scales)
+library(dplyr)
+```
+
+# A_1
+```{r}
+risk_data = import(".\\data\\fig5_A_1_data.csv")
+fit = summary(coxph(Surv(PFS, PFS.event) ~ model_risk, data = risk_data))
+c_index = fit$concordance[1]
+fit = survfit(Surv(PFS, PFS.event) ~ model_risk, data = risk_data)
+pal = c("#DE3163", "purple", "#279087")
+p = ggsurvplot(fit, 
+           pval = TRUE,
+           pval.size = 6, 
+           pval.coord = c(5, 0.2),
+           risk.table = T, 
+           title = "" ,
+           legend = "bottom",
+           legend.title = "Risk",
+           palette = pal,
+           xlab = "Time (days)",
+           ylab = "PFS probability",
+           risk.table.col = "model_risk",
+           risk.table.y.text.col = TRUE, 
+           risk.table.y.text = T,
+           conf.int = F,
+           xlim = c(0, 45),
+           break.x.by = 10,
+           risk.table.fontsize = 6, 
+           legend.labs = c("High", "Int", "Low"),
+           ggtheme = theme(panel.background = element_rect(fill = "white"),
+                           panel.border = element_rect(linewidth = 1, fill = NA), 
+                           axis.title = element_text(size = 24, color = "black"), 
+                           axis.text = element_text(size = 18, color = "black"),
+                           axis.line = element_line(linewidth = 0.3, colour = "black"),
+                           axis.ticks = element_blank(),
+                           panel.grid.major = element_blank(),
+                           panel.grid.minor = element_blank(),
+                           legend.box = "horizontal",
+                           legend.title = element_text(size = 18, colour = "black"),
+                           legend.text = element_text(size = 18, color = "black"), 
+                           legend.background = element_rect(fill = "white", color = "black"),
+                           plot.title = element_text(size = 24, hjust = 0.5, face = "bold")
+                           ),
+           xticks.by = 250,
+           )
+p$plot = p$plot + 
+  scale_color_manual(values = pal) + 
+  scale_fill_manual(values = pal) + 
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 900)) + 
+  scale_y_continuous(expand = c(0, 0)) + 
+  annotate("text", x = 10, y = 0.1,size = 6,  label = paste0("C-index = ", round(c_index, 2)))
+png(filename = ".\\figure\\figure5_A_1.png",
+    width = 600,         
+    height = 2800 / 3,    
+    units = "px",    
+    bg = "white",       
+    res = 100)    
+p
+dev.off()
+```
+# A_2
+```{r}
+risk_data = import(".\\data\\fig5_A_2_data.csv")
+fit = summary(coxph(Surv(PFS, PFS.event) ~ model_risk, data = risk_data))
+c_index = fit$concordance[1]
+fit = survfit(Surv(PFS, PFS.event) ~ model_risk, data = risk_data)
+pal = c("#DE3163", "purple", "#279087")
+p = ggsurvplot(fit, 
+           pval = TRUE,
+           pval.size = 6, 
+           pval.coord = c(5, 0.2),
+           risk.table = T, 
+           title = "" ,
+           legend = "bottom",
+           legend.title = "Risk",
+           palette = pal,
+           xlab = "Time (days)",
+           ylab = "PFS probability",
+           risk.table.col = "model_risk",
+           risk.table.y.text.col = TRUE, 
+           risk.table.y.text = T,
+           conf.int = F,
+           xlim = c(0, 45),
+           break.x.by = 10,
+           risk.table.fontsize = 6, 
+           legend.labs = c("High", "Int", "Low"),
+           ggtheme = theme(panel.background = element_rect(fill = "white"),
+                           panel.border = element_rect(linewidth = 1, fill = NA), 
+                           axis.title = element_text(size = 24, color = "black"), 
+                           axis.text = element_text(size = 18, color = "black"),
+                           axis.line = element_line(linewidth = 0.3, colour = "black"),
+                           axis.ticks = element_blank(),
+                           panel.grid.major = element_blank(),
+                           panel.grid.minor = element_blank(),
+                           legend.box = "horizontal",
+                           legend.title = element_text(size = 18, colour = "black"),
+                           legend.text = element_text(size = 18, color = "black"), 
+                           legend.background = element_rect(fill = "white", color = "black"),
+                           plot.title = element_text(size = 24, hjust = 0.5, face = "bold")
+                           ),
+           xticks.by = 250,
+           )
+p$plot = p$plot + 
+  scale_color_manual(values = pal) + 
+  scale_fill_manual(values = pal) + 
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 900)) + 
+  scale_y_continuous(expand = c(0, 0)) + 
+  annotate("text", x = 10, y = 0.1,size = 6,  label = paste0("C-index = ", round(c_index, 2)))
+png(filename = ".\\figure\\figure5_A_2.png",
+    width = 600,         
+    height = 2800 / 3,    
+    units = "px",    
+    bg = "white",       
+    res = 100)    
+p
+dev.off()
+```
+# B_1
+```{r}
+risk_data = import(".\\data\\fig5_B_1_data.csv")
+fit = summary(coxph(Surv(PFS, PFS.event) ~ model_risk, data = risk_data))
+c_index = fit$concordance[1]
+fit = survfit(Surv(PFS, PFS.event) ~ model_risk, data = risk_data)
+pal = c("#DE3163", "purple", "#279087")
+p = ggsurvplot(fit, 
+           pval = TRUE,
+           pval.size = 6, 
+           pval.coord = c(5, 0.2),
+           risk.table = T, 
+           title = "" ,
+           legend = "bottom",
+           legend.title = "Risk",
+           palette = pal,
+           xlab = "Time (days)",
+           ylab = "PFS probability",
+           risk.table.col = "model_risk",
+           risk.table.y.text.col = TRUE, 
+           risk.table.y.text = T,
+           conf.int = F,
+           xlim = c(0, 45),
+           break.x.by = 10,
+           risk.table.fontsize = 6, 
+           legend.labs = c("High", "Int", "Low"),
+           ggtheme = theme(panel.background = element_rect(fill = "white"),
+                           panel.border = element_rect(linewidth = 1, fill = NA), 
+                           axis.title = element_text(size = 24, color = "black"), 
+                           axis.text = element_text(size = 18, color = "black"),
+                           axis.line = element_line(linewidth = 0.3, colour = "black"),
+                           axis.ticks = element_blank(),
+                           panel.grid.major = element_blank(),
+                           panel.grid.minor = element_blank(),
+                           legend.box = "horizontal",
+                           legend.title = element_text(size = 18, colour = "black"),
+                           legend.text = element_text(size = 18, color = "black"), 
+                           legend.background = element_rect(fill = "white", color = "black"),
+                           plot.title = element_text(size = 24, hjust = 0.5, face = "bold")
+                           ),
+           xticks.by = 250,
+           )
+p$plot = p$plot + 
+  scale_color_manual(values = pal) + 
+  scale_fill_manual(values = pal) + 
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 900)) + 
+  scale_y_continuous(expand = c(0, 0)) + 
+  annotate("text", x = 10, y = 0.1,size = 6,  label = paste0("C-index = ", round(c_index, 2)))
+png(filename = ".\\figure\\figure5_B_1.png",
+    width = 600,         
+    height = 2800 / 3,    
+    units = "px",    
+    bg = "white",       
+    res = 100)    
+p
+dev.off()
+```
+# B_2
+```{r}
+risk_data = import(".\\data\\fig5_B_2_data.csv")
+fit = summary(coxph(Surv(PFS, PFS.event) ~ model_risk, data = risk_data))
+c_index = fit$concordance[1]
+fit = survfit(Surv(PFS, PFS.event) ~ model_risk, data = risk_data)
+pal = c("#DE3163", "purple", "#279087")
+p = ggsurvplot(fit, 
+           pval = TRUE,
+           pval.size = 6, 
+           pval.coord = c(5, 0.2),
+           risk.table = T, 
+           title = "" ,
+           legend = "bottom",
+           legend.title = "Risk",
+           palette = pal,
+           xlab = "Time (days)",
+           ylab = "PFS probability",
+           risk.table.col = "model_risk",
+           risk.table.y.text.col = TRUE, 
+           risk.table.y.text = T,
+           conf.int = F,
+           xlim = c(0, 45),
+           break.x.by = 10,
+           risk.table.fontsize = 6, 
+           legend.labs = c("High", "Int", "Low"),
+           ggtheme = theme(panel.background = element_rect(fill = "white"),
+                           panel.border = element_rect(linewidth = 1, fill = NA), 
+                           axis.title = element_text(size = 24, color = "black"), 
+                           axis.text = element_text(size = 18, color = "black"),
+                           axis.line = element_line(linewidth = 0.3, colour = "black"),
+                           axis.ticks = element_blank(),
+                           panel.grid.major = element_blank(),
+                           panel.grid.minor = element_blank(),
+                           legend.box = "horizontal",
+                           legend.title = element_text(size = 18, colour = "black"),
+                           legend.text = element_text(size = 18, color = "black"), 
+                           legend.background = element_rect(fill = "white", color = "black"),
+                           plot.title = element_text(size = 24, hjust = 0.5, face = "bold")
+                           ),
+           xticks.by = 250,
+           )
+p$plot = p$plot + 
+  scale_color_manual(values = pal) + 
+  scale_fill_manual(values = pal) + 
+  scale_x_continuous(expand = c(0, 0), limits = c(0, 900)) + 
+  scale_y_continuous(expand = c(0, 0)) + 
+  annotate("text", x = 10, y = 0.1,size = 6,  label = paste0("C-index = ", round(c_index, 2)))
+png(filename = ".\\figure\\figure5_B_2.png",
+    width = 600,         
+    height = 2800 / 3,    
+    units = "px",    
+    bg = "white",       
+    res = 100)    
+p
+dev.off()
+```
+# C
+```{r}
+sum_data = import(".\\data\\fig5_C_data.csv")
+p = list()
+var_list = c(rep("median_of_TMPMPkl", 9), "n+", rep("n_kl", 2))
+text_list = c(rep("TMPMPkl", 9), "n", rep("n_kl", 2))
+script_list = c(rep("median", 9), rep("", 3))
+variable_list = c("bs_value", "slope_3w", "reduct_per_3w", "reduct_per_6w", "max_reduct_all", "conv_pos_neg_3w", "conv_pos_neg_6w", "nadir", "time_to_nadir", "reduct_per_3w", "time_to_nadir", "max_reduct_all")
+variable_text_list = c("Baseline value", "Clearnce rate (WK 3)", "% Reduct (WK 3)", "% Reduct (WK 6)", "% Reduct (max)", "Pos to Neg (WK 3)", "Pos to Neg (WK 6)", "Nadir", "Time to Nadir", "% Reduct (WK 3)", "Time to Nadir", "% Reduct (max)")
+y_max = c(0, 0, 0, 0, 0, 0, 0, 25, 75, 0, 50, 0)
+y_min = c(0, -500, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0)
+pal = c("#279087", "purple", "#DE3163")
+for (i in 1: 12) {
+  if(i %in% c(5, 10, 12)){
+      sum_data_tmp = sum_data %>% 
+        filter(var == var_list[i], variable == variable_list[i])
+      p[[i]] = ggplot(data = sum_data_tmp, aes(x = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))), y = value + 0.000015, fill = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))))) + 
+      geom_hline(yintercept = 0, lty = 2) + 
+      geom_boxplot(fatten = NULL, width = 0.5, alpha = 0.5) + 
+      stat_summary(fun.y = median, geom = "errorbar", aes(ymax = ..y.., ymin = ..y.., color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))), 
+                   linewidth = 0.5, size = 1, linetype = "solid", width = 0.5) +
+    stat_summary(fun.y = mean, geom = "point", aes(color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))),
+                 size = 3) + 
+      scale_fill_manual(values = pal) +
+      scale_color_manual(values = pal) + 
+      theme_bw() +
+      labs(x = "", 
+          y = "", 
+          title = bquote(.(text_list[i])[.(script_list[i])]),
+          subtitle = variable_text_list[i]
+          ) +
+      theme(axis.title = element_text(size = 18, color = "black"),
+            axis.text = element_text(size = 16, color = "black"), 
+            legend.position = "none", 
+            panel.grid = element_blank(),
+            panel.border = element_rect(linewidth = 1, fill = NA),
+            plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+            plot.subtitle = element_text(size = 15, hjust = 0.5)) + 
+      scale_x_discrete(labels = c("Low", "Int", "High")) + 
+      scale_y_continuous(labels = scales::percent)
+    }
+  
+  if(i == 1){
+    sum_data_tmp = sum_data %>% 
+      filter(var == var_list[i], variable == variable_list[i])
+    p[[i]] = ggplot(data = sum_data_tmp, aes(x = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))), y = value, fill = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))))) + 
+      geom_hline(yintercept = 0, lty = 2) + 
+      geom_boxplot(fatten = NULL, width = 0.5, alpha = 0.5) + 
+      stat_summary(fun.y = median, geom = "errorbar", aes(ymax = ..y.., ymin = ..y.., color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))), 
+                   linewidth = 0.5, size = 1, linetype = "solid", width = 0.5) +
+    stat_summary(fun.y = mean, geom = "point", aes(color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))),
+                 size = 3) + 
+      scale_fill_manual(values = pal) + 
+      scale_color_manual(values = pal) + 
+      theme_bw() +
+      labs(x = "", 
+          y = "", 
+          title = bquote(.(text_list[i])[.(script_list[i])]), 
+          subtitle = variable_text_list[i]) + 
+      theme(axis.title = element_text(size = 18, color = "black"),
+            axis.text = element_text(size = 16, color = "black"), 
+            legend.position = "none", 
+            panel.grid = element_blank(),
+            panel.border = element_rect(linewidth = 1, fill = NA),
+            plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+            plot.subtitle = element_text(size = 15, hjust = 0.5)) + 
+      scale_y_log10() + 
+      scale_x_discrete(labels = c("Low", "Int", "High"))
+  }
+  
+  if(i %in% c(2, 8, 9, 11)){
+    sum_data_tmp = sum_data %>% 
+      filter(var == var_list[i], variable == variable_list[i])
+    p[[i]] = ggplot(data = sum_data_tmp, aes(x = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))), y = value, fill = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))))) + 
+      geom_hline(yintercept = 0, lty = 2) + 
+      geom_boxplot(fatten = NULL, width = 0.5, alpha = 0.5) + 
+      stat_summary(fun.y = median, geom = "errorbar", aes(ymax = ..y.., ymin = ..y.., color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))), 
+                   linewidth = 0.5, size = 1, linetype = "solid", width = 0.5) +
+    stat_summary(fun.y = mean, geom = "point", aes(color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))),
+                 size = 3) + 
+      scale_fill_manual(values = pal) + 
+      scale_color_manual(values = pal) + 
+      theme_bw() +
+      labs(x = "", 
+           y = "", 
+           title = bquote(.(text_list[i])[.(script_list[i])]), 
+           subtitle = variable_text_list[i]) + 
+      theme(axis.title = element_text(size = 18, color = "black"),
+            axis.text = element_text(size = 16, color = "black"), 
+            legend.position = "none", 
+            panel.grid = element_blank(),
+            panel.border = element_rect(linewidth = 1, fill = NA),
+            plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+            plot.subtitle = element_text(size = 15, hjust = 0.5)) + 
+      scale_x_discrete(labels = c("Low", "Int", "High")) + 
+      coord_cartesian(ylim = c(y_min[i], y_max[i]))
+  }
+  if(i %in% c(3, 4)){
+    sum_data_tmp = sum_data %>% 
+      filter(var == var_list[i], variable == variable_list[i])
+    p[[i]] = ggplot(data = sum_data_tmp, aes(x = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))), y = value, fill = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))))) + 
+      geom_hline(yintercept = 0, lty = 2) + 
+      geom_boxplot(fatten = NULL, width = 0.5, alpha = 0.5) + 
+      stat_summary(fun.y = median, geom = "errorbar", aes(ymax = ..y.., ymin = ..y.., color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))), 
+                   linewidth = 0.5, size = 1, linetype = "solid", width = 0.5) +
+    stat_summary(fun.y = mean, geom = "point", aes(color = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp")))),
+                 size = 3) + 
+                   
+      scale_fill_manual(values = pal) + 
+      scale_color_manual(values = pal) + 
+      theme_bw() +
+      labs(x = "", 
+           y = "", 
+           title = bquote(.(text_list[i])[.(script_list[i])]), 
+           subtitle = variable_text_list[i]) + 
+      theme(axis.title = element_text(size = 18, color = "black"),
+            axis.text = element_text(size = 16, color = "black"), 
+            legend.position = "none", 
+            panel.grid = element_blank(),
+            panel.border = element_rect(linewidth = 1, fill = NA),
+            plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+            plot.subtitle = element_text(size = 15, hjust = 0.5)) + 
+      scale_x_discrete(labels = c("Low", "Int", "High")) + 
+      scale_y_continuous(labels = scales::percent) + 
+      coord_cartesian(ylim = c(y_min[i], y_max[i]))
+  }
+  if(i %in% c(6, 7)){
+    sum_data_tmp = sum_data %>% 
+      filter(var == var_list[i], variable == variable_list[i]) %>% 
+      group_by(model_risk) %>% 
+      dplyr::summarise(conv_per = sum(value == 1) / n())
+    
+    p[[i]] = ggplot(data = sum_data_tmp, aes(x = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))), y = conv_per, fill = factor(model_risk, levels = rev(c("mPD", "mSD", "mResp"))))) + 
+      geom_hline(yintercept = 0, lty = 2) + 
+      geom_bar(width = 0.5, alpha = 0.5, color = "black", stat = "identity") +
+      scale_fill_manual(values = pal) + 
+      scale_color_manual(values = pal) + 
+      theme_bw() +
+      labs(x = "", 
+           y = "", 
+           title = bquote(.(text_list[i])[.(script_list[i])]), 
+           subtitle = variable_text_list[i]) + 
+      theme(axis.title = element_text(size = 18, color = "black"),
+            axis.text = element_text(size = 15, color = "black"), 
+            legend.position = "none", 
+            panel.grid = element_blank(),
+            panel.border = element_rect(linewidth = 1, fill = NA),
+            plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
+            plot.subtitle = element_text(size = 16, hjust = 0.5)) + 
+      scale_x_discrete(labels = c("Low", "Int", "High")) + 
+      scale_y_continuous(labels = scales::percent)
+  }
+  
+}
+ggsave(".\\figure\\figure5_C.png", wrap_plots(p, ncol = 3), dpi = 600, width = 9, height = 12)
+
+
+```

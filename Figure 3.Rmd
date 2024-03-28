@@ -1,0 +1,96 @@
+---
+title: "Figure 3"
+author: "Ding"
+date: "2024-03-22"
+output: html_document
+---
+```{r include=FALSE}
+library(rio)
+library(ggplot2)
+library(gridExtra)
+
+```
+
+
+```{r setup, include=FALSE}
+
+p1 = list()
+p2 = list()
+vertical_line = c(0.122, 0.078, 0.088, 0.128)
+model_list = c("C3D1-OS", "C4D1-OS", "C3D1-PFS", "C4D1-PFS")
+color_idx = c(c(1: 2), c(1: 2) + 19, c(1: 2) + 19 * 2, c(1: 2) + 19 * 3)
+color_tmp = rep(1, 76)
+color_tmp[color_idx] = color_tmp[color_idx] + 1
+bar_data = import(".\\data\\fig3_data.csv") %>% 
+  mutate(mycolor = color_tmp, 
+         mycolor = as.factor(mycolor)
+         )
+
+
+for (i in 1: 2) {
+  tmp_1 = bar_data %>% filter(model == model_list[i])
+  tmp_1$gene = factor(tmp_1$gene, rev(unique(tmp_1$gene)))
+  p1[[i]] = ggplot(data = tmp_1, aes(y = gene, x = test - 0.55)) + 
+    geom_bar(stat = "identity" ,position = 'dodge', aes(fill = mycolor), width = 0.4) + 
+    geom_vline(xintercept = vertical_line[i], color = "#E02040", linetype = 2) + 
+    theme_minimal() + 
+    theme(axis.title.x = element_text(size = 20),
+          axis.text.y = element_text(size = 13, colour = "#6B6B6B"), 
+          axis.text.x = element_text(size = 20, colour = "#6B6B6B"), 
+          panel.grid.major.y = element_blank(), 
+          panel.grid.minor.y = element_blank(),
+          panel.grid.major.x = element_line(linetype = 2, color = "#6B6B6B", linewidth = 0.3),
+          panel.grid.minor.x = element_blank(),
+          plot.title = element_text(size = 20, hjust = 0.2, face = "bold"), 
+          plot.subtitle = element_text(size = 12, hjust = 0.5, face = "bold"), 
+          legend.position = "none") + 
+    labs(title = model_list[i],
+        y = "", 
+        x = "C-index") + 
+    scale_x_continuous(limits = c(0, 0.17), breaks = c(0.05, 0.15), labels = c(0.6, 0.7)) +
+    scale_fill_manual(values = c("#44A2D6", "#E96279"))
+}
+
+
+for (i in 3: 4) {
+  tmp_2 = bar_data %>% filter(model == model_list[i])
+  tmp_2$gene = factor(tmp_2$gene, rev(unique(tmp_2$gene)))
+  p2[[i]] = ggplot(data = tmp_2, aes(y = gene, x = test - 0.45)) + 
+    geom_bar(stat = "identity" ,position = 'dodge', aes(fill = mycolor), width = 0.4) + 
+    geom_vline(xintercept = vertical_line[i], color = "#E02040", linetype = 2) + 
+    theme_minimal() + 
+    theme(axis.title.x = element_text(size = 20),
+          axis.text.y = element_text(size = 13, colour = "#6B6B6B"), 
+          axis.text.x = element_text(size = 20, colour = "#6B6B6B"), 
+          panel.grid.major.y = element_blank(), 
+          panel.grid.minor.y = element_blank(),
+          panel.grid.major.x = element_line(linetype = 2, color = "#6B6B6B", linewidth = 0.3),
+          panel.grid.minor.x = element_blank(),
+          plot.title = element_text(size = 20, hjust = 0.2, face = "bold"), 
+          plot.subtitle = element_text(size = 12, hjust = 0.5, face = "bold"), 
+          legend.position = "none") + 
+    labs(title = model_list[i],
+        y = "", 
+        x = "C-index") + 
+    scale_x_continuous(limits = c(0, 0.26), breaks = c(0.05, 0.15, 0.25), labels = c(0.5, 0.6, 0.7)) +
+    scale_fill_manual(values = c("#44A2D6", "#E96279"))
+}
+
+
+p = grid.arrange(p1[[1]],p1[[2]],p2[[3]],p2[[4]], ncol =4)
+ggsave(paste0(".\\figure\\figure3.png"), p, dpi = 500, width = 14, height = 8)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

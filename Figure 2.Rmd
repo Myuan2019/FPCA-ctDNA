@@ -1,0 +1,109 @@
+---
+title: "Figure 2"
+author: "Ding"
+date: "2024-03-22"
+output: html_document
+---
+```{r include=FALSE}
+library(circlize)
+library(rio)
+library(ggplot2)
+
+
+```
+
+
+# A Requires non-public data
+```{r}
+
+
+```
+
+
+# B
+```{r}
+data = import(".\\data\\fig2_B_data.csv") %>% 
+  mutate(Var1 = factor(Var1, levels = unique(Var1)), 
+         Var2 = factor(Var2, levels = unique(Var2))
+         )
+
+p1 = ggplot() + 
+  geom_tile(aes(x = Var1, y = Var2, fill = value), data = data, colour = "white", linewidth = 0.05, alpha = 0.7) + 
+  geom_rect(aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), data = rect_mt, fill = NA, linetype = "dashed", linewidth = 1.1, inherit.aes = T, color = "black") +
+  scale_x_discrete(expand = c(0, 0), breaks = colnames(cor_mt)[(0: 17)  * 2 + 1]) +
+  scale_y_discrete(expand = c(0, 0), breaks = colnames(cor_mt)[(0: 17)  * 2 + 1]) +
+  theme_bw() + 
+  theme(
+    legend.position = "none", 
+    plot.background = element_blank(), 
+    
+    axis.line = element_blank(), 
+    axis.ticks = element_blank(), 
+    axis.text.x = element_blank(), 
+    axis.text.y = element_blank(), 
+    axis.title = element_blank(), 
+    panel.background = element_rect(fill = "white"), 
+    panel.border = element_blank(), 
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank()
+  )  +
+  scale_fill_gradientn(colors = (c("#FF5B1B","#FFBC13", "#671D69", "white")), values = c(1, 0.66, 0.33, 0))
+ggsave(".\\figure\\figure2_B.png", p1, dpi = 500, width = 10, height = 10)
+
+
+```
+
+# C
+```{r include=FALSE}
+data = import(".\\data\\fig2_C_data.csv")
+gap_vec = rep(c(1,1,1,1,3),16)
+names(gap_vec) = unique(as.character(data_mt$Var1))
+
+circos.clear()
+circos.par(start.degree = 90, 
+           points.overflow.warning = FALSE,
+           gap.after = gap_vec)
+col_1 = "#c73866"
+col_2 = "#fe676e"
+col_3 = "#fd8f52"
+col_4 = "#ffbd71"
+col_5 = "#ffdca2"
+
+grid.col = rep(c(col_1, col_2, col_3, col_4, col_5), 16)
+names(grid.col) = unique(as.character(data_mt$Var1))
+group = rep(c("cfDNA conc", "max AFkl", "max AF", "max TMPkl", "max TMP", "mean AFkl", "mean AF", "mean TMPkl", "mean TMP", "median AFkl", "median AF", "median TMPkl", "median TMP", "nkl", "nNorm", "n"), each = 5)
+names(group) = unique(as.character(data_mt$Var1))
+png(filename = ".\\figure\\figure2_C.png", 
+    width = 4000,      
+    height = 4000,      
+    units = "px",     
+    bg = "white")        
+chordDiagram(data,
+             grid.col = grid.col,
+             col = rand_color(nrow(cor_data)),
+             group = group,
+             transparency = 0.25,
+              annotationTrack = "grid", 
+             annotationTrackHeight = c(0.08, 0.1),
+             link.largest.ontop = TRUE,
+             preAllocateTracks = list(
+               track.height = 0.1,
+               track.margin = c(0.01, 0))
+             )
+dev.off()
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

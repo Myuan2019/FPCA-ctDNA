@@ -1,0 +1,101 @@
+---
+title: "extract input"
+author: "Ding"
+date: "2024-03-22"
+output: html_document
+---
+```{r include=FALSE}
+library(rio)
+library(fdapace)
+library(pec)
+library(party)
+library(survminer)
+library(survival)
+library(glmnet)
+library(dplyr)
+```
+
+```{r}
+import(".\\data\\metrics_data_example.csv") %>% head()
+import(".\\data\\os_data_example.csv") %>% head()
+```
+
+```{r include=FALSE}
+metrics_data = import(".\\data\\metrics_data.csv") %>% 
+  mutate(var = factor(var, levels = unique(var)))
+os_data = import(".\\data\\os_data.csv")
+top_var = as.character(unique(metrics_data$var))
+fpc_mt = NULL
+for (i in 1: (length(top_var))) {
+  curve_data = metrics_data %>% filter(var == top_var[i]) %>% filter(time < 45)
+  fpca_data = MakeFPCAInputs(curve_data$ID, curve_data$time, log(curve_data$value + 0.001))
+  fpcaObj <- FPCA(fpca_data$Ly, fpca_data$Lt, list(plot = F, methodMuCovEst = 'smooth'))
+  colnames(fpcaObj$xiEst) = paste0(rep(top_var[i], ncol(fpcaObj$xiEst)), 1: ncol(fpcaObj$xiEst))
+  fpc_mt = cbind(fpc_mt, fpcaObj$xiEst[, 1: 2])
+}
+fpc_mt = data.frame(scale(fpc_mt), ID = unique(metrics_data$ID))
+fpc_mt = fpc_mt %>%
+  left_join(os_data, by = "ID") %>%
+  left_join(metrics_data %>%
+              distinct(ID, .keep_all = T) %>%
+              select(ID, train_test_split), by = "ID")
+set.seed(27519)
+dat = fpc_mt %>% select(-ID, -BL_n, -BL_cfDNA_conc, -train_test_split) %>% select(OS.event, OS, everything())
+colnames(dat)[1: 2] = c("status", "time")
+fm = as.formula(paste("Surv(time, status) ~ ", 
+                       paste(colnames(dat[, -(1:2)]), 
+                             collapse = "+")))
+fit.cforest <- cforest(fm, data = dat, control = cforest_classical(ntree = 100))
+var_data = varimp(fit.cforest)
+var_tmp = var_data %>% 
+  as.data.frame()
+var_tmp$Variable = rownames(var_tmp)
+colnames(var_tmp)[1] = "Importance"
+idx_var = order(var_tmp$Importance, decreasing = T)
+var_tmp = var_tmp[idx_var, ] %>% 
+  mutate(Variable = factor(Variable, levels = rev(Variable)), 
+         model = "C3D1-OS"
+         )
+set.seed(27519)
+risk_data = NULL
+idx_var = var_tmp %>% 
+  filter(model == "C3D1-OS") %>% 
+  select(Variable) %>% 
+  unlist() %>% 
+  as.vector()
+tmp = fpc_mt
+pca_tmp = prcomp(fpc_mt[, idx_var], center = TRUE,scale. = TRUE)
+fpc_mt_ = pca_tmp$x[, 1: 10] %>% as.data.frame() %>% cbind(tmp)
+train_data = fpc_mt_ %>% filter(train_test_split == "training") 
+train_fts = train_data %>% select(contains("PC"), BL_n, BL_cfDNA_conc)
+train_fts_mm = model.matrix(~., train_fts)[, -1]
+train_surv = Surv(train_data[,"OS"], train_data[,"OS.event"])
+g1 = glmnet(x = train_fts_mm, y = train_surv, family = "cox", alpha = 0.5, standardize = T)
+l1 = lapply(1: 10, function(i) cv.glmnet(x = train_fts_mm, y = train_surv, family = "cox", alpha = 0.5, standardize = T))
+l2 = mean(sapply(l1, '[[','lambda.min'))
+test_data = fpc_mt_ %>% filter(train_test_split == "test") 
+test_fts = test_data %>% select(contains("PC"), BL_n, BL_cfDNA_conc)
+test_fts_mm = model.matrix(~., test_fts)[, -1]
+test_surv = Surv(test_data[,"OS"], test_data[,"OS.event"])
+test_predict = predict(g1, newx = test_fts_mm, s = l2) %>% as.data.frame()
+colnames(test_predict)[1] = "model_prediction"
+risk_tmp = data.frame(ID = test_data$ID, OS.event = test_data$OS.event, OS = test_data$OS, risk = test_predict$model_prediction)
+risk_data = rbind(risk_data, risk_tmp)
+risk_split = quantile(risk_data$risk, c(0.33, 0.67))
+risk_data = risk_data %>% 
+  as.data.frame() %>% 
+  mutate(model_risk = ifelse(risk >= risk_split[2],"High", ifelse(risk < risk_split[1],"Low","Int")))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
